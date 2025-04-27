@@ -6,9 +6,7 @@
  */
 
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
-import { StoredQuery } from '../../types/storage';
-import { SchemaCache } from '../../types/storage';
-import { UserSettings } from '../../types/storage';
+import { StoredQuery, SchemaCache, UserSettings } from '../../types/storage';
 
 // Database name and version
 const DB_NAME = 'metabase-nl-db';
