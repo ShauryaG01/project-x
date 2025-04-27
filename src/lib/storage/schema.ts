@@ -5,8 +5,7 @@
  */
 
 import { getDB } from './db';
-import { SchemaCache, TableInfo, ColumnInfo, Relationship } from '../../types/storage';
-import { StorageError, StorageErrorType } from '../../types/storage';
+import { SchemaCache, TableInfo as Table, ColumnInfo as TableField, StorageError, StorageErrorType, Relationship } from '../../types/storage';
 
 /**
  * Save schema cache for a database
@@ -108,7 +107,7 @@ export async function getAllSchemas(): Promise<SchemaCache[]> {
 /**
  * Add or update a table in schema
  */
-export async function updateTable(databaseId: string, table: TableInfo): Promise<SchemaCache> {
+export async function updateTable(databaseId: string, table: Table): Promise<SchemaCache> {
   try {
     const schema = await getSchema(databaseId);
     
@@ -225,7 +224,7 @@ export async function removeTable(databaseId: string, tableId: string): Promise<
 /**
  * Get a specific table from schema
  */
-export async function getTable(databaseId: string, tableId: string): Promise<TableInfo | null> {
+export async function getTable(databaseId: string, tableId: string): Promise<Table | null> {
   try {
     const schema = await getSchema(databaseId);
     
