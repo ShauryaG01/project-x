@@ -10,7 +10,7 @@ yarn.lock
 /dist
 /build
 /out
-
+/apps
 # Environment variables
 .env
 .env.local

@@ -7,41 +7,39 @@
  * - Extracting results from Metabase
  */
 
-// Define selectors for Metabase UI elements (will be refined later)
-const SELECTORS = {
-  SQL_EDITOR: '.ace_editor',
-  RUN_BUTTON: '.RunButton',
-  RESULTS_TABLE: '.TableInteractive',
-  VISUALIZATION_ROOT: '.Visualization',
-  ERROR_MESSAGE: '.QueryError'
-};
+import { metabaseAdapter } from '../lib/adapters/metabase';
+import { adapterRegistry } from '../lib/adapters/registry';
 
 // State management
 let isMetabaseDetected = false;
 let isInitialized = false;
 
 /**
- * Check if the current page is a Metabase instance
+ * Check if the current page is a Metabase instance using the adapter
  */
-function detectMetabase(): boolean {
-  // Look for key Metabase elements
-  const hasEditor = document.querySelector(SELECTORS.SQL_EDITOR) !== null;
-  const hasVisualization = document.querySelector(SELECTORS.VISUALIZATION_ROOT) !== null;
-  
-  // Check for metabase in URL as additional confirmation
-  const isMetabaseUrl = window.location.href.includes('metabase') || 
-                         window.location.href.includes('dashboard');
-                        
-  return (hasEditor || hasVisualization) && isMetabaseUrl;
+async function detectMetabase(): Promise<boolean> {
+  try {
+    const detectionResult = await metabaseAdapter.detect();
+    return detectionResult.detected;
+  } catch (error) {
+    console.error('MetabaseNL: Error detecting Metabase', error);
+    return false;
+  }
 }
 
 /**
  * Initialize the content script
  */
-function initialize() {
+async function initialize() {
   if (isInitialized) return;
   
   console.log('MetabaseNL: Content script initializing');
+  
+  // Register the Metabase adapter with the registry
+  adapterRegistry.register(metabaseAdapter);
+  
+  // Initialize the adapter
+  await metabaseAdapter.initialize();
   
   // Register message listener
   chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
@@ -59,6 +57,12 @@ function initialize() {
       case 'EXTRACT_RESULTS':
         extractResults()
           .then(results => sendResponse({ success: true, results }))
+          .catch(error => sendResponse({ success: false, error: error.message }));
+        return true; // Keep message channel open for async response
+        
+      case 'EXTRACT_SCHEMA':
+        extractSchema()
+          .then(schema => sendResponse({ success: true, schema }))
           .catch(error => sendResponse({ success: false, error: error.message }));
         return true; // Keep message channel open for async response
     }
@@ -96,36 +100,51 @@ async function extractResults(): Promise<any> {
 }
 
 /**
+ * Extract schema from Metabase
+ * This is a placeholder implementation that will be expanded in Step 13
+ */
+async function extractSchema(): Promise<any> {
+  console.log('MetabaseNL: Extracting schema');
+  
+  try {
+    return await metabaseAdapter.extractSchema();
+  } catch (error) {
+    console.error('MetabaseNL: Error extracting schema', error);
+    throw error;
+  }
+}
+
+/**
  * Main initialization function that runs when the content script loads
  */
-function main() {
+async function main() {
   console.log('MetabaseNL: Content script loaded');
   
   // Check if we're in Metabase
-  isMetabaseDetected = detectMetabase();
+  isMetabaseDetected = await detectMetabase();
   
   if (isMetabaseDetected) {
     console.log('MetabaseNL: Metabase detected');
-    initialize();
+    await initialize();
   } else {
     console.log('MetabaseNL: Not a Metabase page');
     
     // Check again after DOM is fully loaded
-    window.addEventListener('load', () => {
-      isMetabaseDetected = detectMetabase();
+    window.addEventListener('load', async () => {
+      isMetabaseDetected = await detectMetabase();
       if (isMetabaseDetected) {
         console.log('MetabaseNL: Metabase detected after DOM load');
-        initialize();
+        await initialize();
       }
     });
     
     // Check again after any potential SPA navigation
-    const observer = new MutationObserver(() => {
+    const observer = new MutationObserver(async () => {
       if (!isMetabaseDetected) {
-        isMetabaseDetected = detectMetabase();
+        isMetabaseDetected = await detectMetabase();
         if (isMetabaseDetected) {
           console.log('MetabaseNL: Metabase detected after DOM mutation');
-          initialize();
+          await initialize();
           observer.disconnect();
         }
       }
