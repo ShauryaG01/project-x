@@ -1,3 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
 :root {
   --primary-color: #509ee3;
   --secondary-color: #88bf4d;
@@ -18,14 +37,6 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-body {
-  font-family: var(--font-family);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--dark-color);
-  background-color: var(--light-color);
 }
 
 body, html {
@@ -141,4 +152,17 @@ input, textarea {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.3);
+}
+
+/* Custom styles for QueryInterface */
+.query-textarea {
+  @apply min-h-[120px] resize-y;
+}
+
+.sql-result {
+  @apply font-mono bg-gray-100 p-4 rounded-md whitespace-pre-wrap;
+}
+
+.error-message {
+  @apply text-red-600 bg-red-100 p-3 rounded-md mt-2;
 } 

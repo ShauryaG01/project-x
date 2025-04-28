@@ -89,6 +89,15 @@ function copyExtensionFiles() {
 
 export default defineConfig({
   plugins: [react(), copyExtensionFiles()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    port: 3000,
+    open: true,
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
