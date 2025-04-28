@@ -8,6 +8,8 @@ export interface QueryProcessingResult {
   validation: SQLValidationResult;
   formatted: string;
   error?: string;
+  data?: Record<string, any>[];
+  sql?: string;
 }
 
 export interface QueryProcessingOptions {
