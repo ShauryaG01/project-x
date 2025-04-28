@@ -162,4 +162,150 @@ export function validateSelector(selectorKey: string): boolean {
     );
     return !!result.singleNodeValue;
   }
-} 
+}
+
+/**
+ * Metabase UI Selectors
+ * 
+ * This module contains CSS selectors for Metabase UI elements.
+ */
+
+/**
+ * Main Metabase application container
+ */
+export const METABASE_APP = '.metabase-app';
+
+/**
+ * Data model browser container
+ */
+export const DATA_MODEL_BROWSER = '.data-model-browser';
+
+/**
+ * Query builder container
+ */
+export const QUERY_BUILDER = '.query-builder';
+
+/**
+ * Database selector
+ */
+export const DATABASE_SELECTOR = '.database-selector';
+
+/**
+ * Table list item
+ */
+export const TABLE_LIST_ITEM = '.table-list-item';
+
+/**
+ * Table detail view
+ */
+export const TABLE_DETAIL_VIEW = '.table-detail-view';
+
+/**
+ * Table header
+ */
+export const TABLE_HEADER = '.table-header';
+
+/**
+ * Table name
+ */
+export const TABLE_NAME = '.table-name';
+
+/**
+ * Table description
+ */
+export const TABLE_DESCRIPTION = '.table-description';
+
+/**
+ * Table ID attribute
+ */
+export const TABLE_ID_ATTRIBUTE = '[data-table-id]';
+
+/**
+ * Column list item
+ */
+export const COLUMN_LIST_ITEM = '.column-list-item';
+
+/**
+ * Column name
+ */
+export const COLUMN_NAME = '.column-name';
+
+/**
+ * Column type
+ */
+export const COLUMN_TYPE = '.column-type';
+
+/**
+ * Column primary key indicator
+ */
+export const COLUMN_PRIMARY_KEY_INDICATOR = '.column-primary-key';
+
+/**
+ * Column foreign key indicator
+ */
+export const COLUMN_FOREIGN_KEY_INDICATOR = '.column-foreign-key';
+
+/**
+ * Column not null indicator
+ */
+export const COLUMN_NOT_NULL_INDICATOR = '.column-not-null';
+
+/**
+ * Column detail view
+ */
+export const COLUMN_DETAIL_VIEW = '.column-detail-view';
+
+/**
+ * Column description
+ */
+export const COLUMN_DESCRIPTION = '.column-description';
+
+/**
+ * Column detail close button
+ */
+export const COLUMN_DETAIL_CLOSE_BUTTON = '.column-detail-close';
+
+/**
+ * Foreign key relationship detail
+ */
+export const FK_RELATIONSHIP_DETAIL = '.fk-relationship-detail';
+
+/**
+ * Foreign key source table
+ */
+export const FK_SOURCE_TABLE = '.fk-source-table';
+
+/**
+ * Foreign key source column
+ */
+export const FK_SOURCE_COLUMN = '.fk-source-column';
+
+/**
+ * Foreign key target table
+ */
+export const FK_TARGET_TABLE = '.fk-target-table';
+
+/**
+ * Foreign key target column
+ */
+export const FK_TARGET_COLUMN = '.fk-target-column';
+
+/**
+ * Foreign key relationship close button
+ */
+export const FK_RELATIONSHIP_CLOSE_BUTTON = '.fk-relationship-close';
+
+/**
+ * Admin button
+ */
+export const ADMIN_BUTTON = '.admin-button';
+
+/**
+ * Admin menu
+ */
+export const ADMIN_MENU = '.admin-menu';
+
+/**
+ * Data model option
+ */
+export const DATA_MODEL_OPTION = '.data-model-option'; 
