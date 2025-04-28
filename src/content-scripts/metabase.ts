@@ -9,6 +9,7 @@
 
 import { metabaseAdapter } from '../lib/adapters/metabase';
 import { adapterRegistry } from '../lib/adapters/registry';
+import { QueryResults } from '../types/results';
 
 // State management
 let isMetabaseDetected = false;
@@ -49,8 +50,14 @@ async function initialize() {
         break;
         
       case 'INJECT_SQL':
-        injectSQL(request.sql)
-          .then(success => sendResponse({ success }))
+        injectSQL(request.sql, request.executeImmediately)
+          .then(result => sendResponse({ success: result.success, error: result.error }))
+          .catch(error => sendResponse({ success: false, error: error.message }));
+        return true; // Keep message channel open for async response
+        
+      case 'EXECUTE_SQL':
+        executeSQL()
+          .then(result => sendResponse({ success: result.success, error: result.error }))
           .catch(error => sendResponse({ success: false, error: error.message }));
         return true; // Keep message channel open for async response
         
@@ -74,29 +81,76 @@ async function initialize() {
 
 /**
  * Inject SQL into Metabase's editor
- * This is a placeholder implementation that will be expanded in Step 7
+ * @param sql SQL query to inject
+ * @param executeImmediately Whether to execute the query immediately
+ * @returns Promise resolving to execution result
  */
-async function injectSQL(sql: string): Promise<boolean> {
-  console.log('MetabaseNL: Injecting SQL', sql);
+async function injectSQL(
+  sql: string, 
+  executeImmediately: boolean = false
+): Promise<{ success: boolean, error?: string }> {
+  console.log('MetabaseNL: Injecting SQL', sql, executeImmediately ? '(with execution)' : '');
   
-  // This will be properly implemented in Step 7
-  // For now, just log the SQL that would be injected
-  return Promise.resolve(false);
+  try {
+    if (executeImmediately) {
+      // Inject and execute in one operation
+      const result = await metabaseAdapter.injectAndExecuteSQL(sql);
+      return result;
+    } else {
+      // Just inject the SQL
+      const success = await metabaseAdapter.injectSQL(sql);
+      return { 
+        success, 
+        error: success ? undefined : 'Failed to inject SQL' 
+      };
+    }
+  } catch (error) {
+    console.error('MetabaseNL: Error injecting SQL:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : String(error) 
+    };
+  }
+}
+
+/**
+ * Execute the current SQL query
+ * @returns Promise resolving to execution result
+ */
+async function executeSQL(): Promise<{ success: boolean, error?: string }> {
+  console.log('MetabaseNL: Executing SQL query');
+  
+  try {
+    const result = await metabaseAdapter.executeQuery();
+    return result;
+  } catch (error) {
+    console.error('MetabaseNL: Error executing SQL:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : String(error) 
+    };
+  }
 }
 
 /**
  * Extract results from Metabase
- * This is a placeholder implementation that will be expanded in Step 8
+ * @returns Promise resolving to query results
  */
-async function extractResults(): Promise<any> {
+async function extractResults(): Promise<QueryResults> {
   console.log('MetabaseNL: Extracting results');
   
-  // This will be properly implemented in Step 8
-  // For now, just return an empty result
-  return Promise.resolve({
-    columns: [],
-    rows: []
-  });
+  try {
+    return await metabaseAdapter.extractResults();
+  } catch (error) {
+    console.error('MetabaseNL: Error extracting results:', error);
+    // Return empty results on error
+    return {
+      columns: [],
+      rows: [],
+      rowCount: 0,
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
 }
 
 /**

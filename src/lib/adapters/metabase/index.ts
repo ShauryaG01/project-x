@@ -7,6 +7,9 @@ import { DatabaseAdapter } from '../adapter';
 import { AdapterConfig, DetectionResult } from '../../../types/adapters';
 import { detectMetabase, detectMetabaseVersion } from './detector';
 import { getMetabaseConfig, validateSelector } from './selectors';
+import { metabaseExecutor, SqlExecutionResult } from './executor';
+import { resultsExtractor } from './results';
+import { QueryResults } from '../../../types/results';
 
 /**
  * Metabase adapter class
@@ -99,6 +102,74 @@ export class MetabaseAdapter implements DatabaseAdapter {
   }
   
   /**
+   * Injects SQL into Metabase's editor
+   * @param sql SQL query to inject
+   * @returns Promise resolving to true if successful
+   */
+  async injectSQL(sql: string): Promise<boolean> {
+    try {
+      console.log('MetabaseAdapter: Injecting SQL:', sql);
+      return await metabaseExecutor.injectSql(sql);
+    } catch (error) {
+      console.error('MetabaseAdapter: Error injecting SQL:', error);
+      return false;
+    }
+  }
+  
+  /**
+   * Executes the current SQL query
+   * @returns Promise resolving to execution result
+   */
+  async executeQuery(): Promise<SqlExecutionResult> {
+    try {
+      console.log('MetabaseAdapter: Executing SQL query');
+      return await metabaseExecutor.executeQuery();
+    } catch (error) {
+      console.error('MetabaseAdapter: Error executing query:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : String(error) 
+      };
+    }
+  }
+  
+  /**
+   * Injects and executes a SQL query
+   * @param sql SQL query to inject and execute
+   * @returns Promise resolving to execution result
+   */
+  async injectAndExecuteSQL(sql: string): Promise<SqlExecutionResult> {
+    try {
+      const injected = await this.injectSQL(sql);
+      if (!injected) {
+        return { success: false, error: 'Failed to inject SQL' };
+      }
+      
+      return await this.executeQuery();
+    } catch (error) {
+      console.error('MetabaseAdapter: Error injecting and executing SQL:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : String(error) 
+      };
+    }
+  }
+  
+  /**
+   * Extracts query results from Metabase
+   * @returns Promise resolving to query results
+   */
+  async extractResults(): Promise<QueryResults> {
+    try {
+      console.log('MetabaseAdapter: Extracting query results');
+      return await resultsExtractor.extractResults();
+    } catch (error) {
+      console.error('MetabaseAdapter: Error extracting results:', error);
+      throw error;
+    }
+  }
+  
+  /**
    * Sets up event listeners for Metabase UI interactions
    */
   private setupEventListeners(): void {
@@ -126,8 +197,13 @@ export class MetabaseAdapter implements DatabaseAdapter {
     }
     
     const observer = new MutationObserver((mutations) => {
-      // Handle SQL editor changes
-      // This will be expanded in Step 7
+      // Detect SQL editor changes
+      mutations.forEach(mutation => {
+        if (mutation.type === 'childList' || mutation.type === 'characterData') {
+          // SQL editor content changed
+          console.log('MetabaseAdapter: SQL editor content changed');
+        }
+      });
     });
     
     observer.observe(editorElement, {
@@ -154,8 +230,24 @@ export class MetabaseAdapter implements DatabaseAdapter {
     }
     
     const observer = new MutationObserver((mutations) => {
-      // Handle results panel changes
-      // This will be expanded in Step 8
+      // Detect results panel changes
+      mutations.forEach(mutation => {
+        if (mutation.type === 'childList') {
+          // Results panel content changed
+          console.log('MetabaseAdapter: Results panel content changed');
+          
+          // You might want to automatically extract results here
+          // This could be triggered when new results load
+          this.extractResults()
+            .then(results => {
+              console.log('MetabaseAdapter: Auto-extracted results:', 
+                `${results.rowCount} rows, ${results.columns.length} columns`);
+            })
+            .catch(error => {
+              console.error('MetabaseAdapter: Error auto-extracting results:', error);
+            });
+        }
+      });
     });
     
     observer.observe(resultContainer, {
