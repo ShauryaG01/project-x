@@ -9,8 +9,10 @@ import {
   LLMProviderType, 
   LLMOperationInput, 
   LLMOperationResult,
-  LLMOperationStatus
+  LLMOperationStatus,
+  LLMOperationType
 } from './types';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Router configuration options
@@ -123,8 +125,8 @@ export class LLMRouter {
     // Try primary provider first
     const primaryProvider = this.providers.get(this.config.primaryProvider);
     if (primaryProvider) {
-      const isAvailable = await primaryProvider.isAvailable();
-      if (isAvailable) {
+      const isReady = primaryProvider.isReady;
+      if (isReady) {
         this.activeProvider = primaryProvider;
         return primaryProvider;
       }
@@ -135,8 +137,8 @@ export class LLMRouter {
       for (const fallbackId of this.config.fallbackProviders) {
         const fallbackProvider = this.providers.get(fallbackId);
         if (fallbackProvider) {
-          const isAvailable = await fallbackProvider.isAvailable();
-          if (isAvailable) {
+          const isReady = fallbackProvider.isReady;
+          if (isReady) {
             this.activeProvider = fallbackProvider;
             return fallbackProvider;
           }
@@ -159,11 +161,11 @@ export class LLMRouter {
     
     if (!provider) {
       return {
-        text: '',
-        status: LLMOperationStatus.ERROR,
+        id: uuidv4(),
+        status: LLMOperationStatus.FAILED,
         error: 'No suitable LLM provider available',
-        operationType: input.operationType,
-        provider: this.config.primaryProvider
+        provider: this.config.primaryProvider,
+        model: 'unknown'
       };
     }
     
@@ -194,11 +196,11 @@ export class LLMRouter {
     
     // All attempts failed
     return {
-      text: '',
-      status: LLMOperationStatus.ERROR,
+      id: uuidv4(),
+      status: LLMOperationStatus.FAILED,
       error: lastError ? lastError.message || 'LLM generation failed' : 'LLM generation failed',
-      operationType: input.operationType,
-      provider: provider.id
+      provider: provider.id,
+      model: provider.supportedModels[0] || 'unknown'
     };
   }
   
@@ -231,8 +233,8 @@ export class LLMRouter {
       const fallbackProvider = this.providers.get(fallbackId);
       
       if (fallbackProvider) {
-        const isAvailable = await fallbackProvider.isAvailable();
-        if (isAvailable) {
+        const isReady = fallbackProvider.isReady;
+        if (isReady) {
           this.activeProvider = fallbackProvider;
           return fallbackProvider;
         }
@@ -246,8 +248,8 @@ export class LLMRouter {
         const fallbackProvider = this.providers.get(fallbackId);
         
         if (fallbackProvider) {
-          const isAvailable = await fallbackProvider.isAvailable();
-          if (isAvailable) {
+          const isReady = fallbackProvider.isReady;
+          if (isReady) {
             this.activeProvider = fallbackProvider;
             return fallbackProvider;
           }
@@ -259,8 +261,8 @@ export class LLMRouter {
     if (this.config.primaryProvider !== currentId) {
       const primaryProvider = this.providers.get(this.config.primaryProvider);
       if (primaryProvider) {
-        const isAvailable = await primaryProvider.isAvailable();
-        if (isAvailable) {
+        const isReady = primaryProvider.isReady;
+        if (isReady) {
           this.activeProvider = primaryProvider;
           return primaryProvider;
         }
