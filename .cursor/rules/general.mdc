@@ -1,5 +1,120 @@
 ---
-description:
-globs:
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
+# Browser-side Natural-Language-to-SQL Assistant for Metabase
+
+## Project Overview
+
+This project is a browser extension that allows non-technical users to generate and execute SQL queries in Metabase using natural language. The extension translates natural language questions into SQL, injects them into Metabase's UI, and provides results to users.
+
+## Key Features
+
+- Natural language to SQL translation using LLMs (OpenAI/Anthropic)
+- Progressive schema learning through user interaction
+- Query history management
+- Error recovery with LLM-based correction
+- Multi-browser support (Chrome, Firefox, Edge, Safari)
+
+## Implementation Guidelines
+
+### General Approach
+
+When implementing each step:
+1. Focus on creating clean, maintainable code
+2. Follow TypeScript best practices
+3. Emphasize security and data privacy
+4. Ensure cross-browser compatibility
+5. Add meaningful comments and documentation
+
+### Code Structure
+
+- Use functional components with hooks for React components
+- Implement clean separation of concerns
+- Create reusable utilities and hooks
+- Add comprehensive type definitions
+
+### Error Handling
+
+- Implement robust error handling for all async operations
+- Provide user-friendly error messages
+- Include recovery mechanisms for common failure scenarios
+
+### Security Considerations
+
+- Validate all SQL before execution
+- Store API keys securely using browser's credential storage
+- Prevent injection attacks and other security vulnerabilities
+- Respect Metabase's permission model
+
+### Performance
+
+- Minimize DOM operations
+- Optimize LLM prompt size
+- Implement caching where appropriate
+- Use Web Workers for heavy computational tasks
+
+## Implementation Process
+
+The implementation plan is divided into 38 steps, each focused on a specific aspect of the application. When working through these steps:
+
+1. Start with a solid foundation (project structure, configurations)
+2. Build core systems (storage, DOM adaptation, LLM integration)
+3. Implement features (query processing, schema management, UI)
+4. Add refinements (analytics, cross-browser support, testing)
+
+For each step:
+- Read the task description carefully
+- Check dependencies to ensure previous steps are completed
+- Focus on implementing only what's required for the current step
+- Add tests where appropriate
+- Follow user instructions if provided
+
+## Key Technical Decisions
+
+- **Extension Architecture**: Chrome Manifest V3 with adapters for other browsers
+- **State Management**: React hooks and context for state
+- **Storage**: IndexedDB for client-side persistence
+- **UI Framework**: React with CSS for styling
+- **Testing**: Vitest for unit/component tests, Playwright for E2E tests
+- **LLM Integration**: Provider-agnostic design with cost optimization
+
+## Getting Started
+
+1. Set up the project structure and configuration files
+2. Implement core extension entry points
+3. Build the storage layer
+4. Create the Metabase DOM adapter
+5. Integrate LLM providers
+6. Implement the natural language to SQL pipeline
+
+## Notes for Specific Implementation Areas
+
+### LLM Integration
+- Implement provider-specific adaptations
+- Handle API key management securely
+- Optimize prompts for token efficiency
+- Implement fallback mechanisms
+
+### Metabase DOM Interaction
+- Use resilient selectors for UI elements
+- Implement self-healing DOM interactions
+- Handle timeouts and loading states
+- Extract results reliably
+
+### Schema Learning
+- Build schema incrementally through user interaction
+- Optimize schema representation for LLM context
+- Provide manual override capabilities
+- Implement schema visualization
+
+### Error Recovery
+- Classify errors by type
+- Use LLM to generate corrections
+- Provide user-friendly recovery options
+- Learn from failure patterns
+
+## Conclusion
+
+This project aims to significantly reduce the time needed for non-technical users to access data insights through Metabase. By following this implementation plan and adhering to the guidelines, we'll create a robust, secure, and user-friendly extension that empowers users to interact with their data through natural language.

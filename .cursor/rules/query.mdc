@@ -1,0 +1,85 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Quality Control Guidelines
+
+## Code Quality Requirements
+
+### Linting and Error Resolution
+
+When implementing any step of this project:
+
+1. **Linting Compliance**:
+   - Ensure all code complies with the project's ESLint configuration
+   - Fix any linting issues before considering a step complete
+   - Pay special attention to TypeScript-specific linting rules
+   - Use consistent formatting that follows the project's style guide
+
+2. **Error Resolution**:
+   - Resolve all TypeScript errors and warnings
+   - Ensure no "any" types are used without explicit justification
+   - Address all compiler warnings
+   - Check for and fix runtime errors
+
+3. **Component Best Practices**:
+   - Ensure React components follow best practices
+   - Avoid unnecessary re-renders
+   - Properly clean up effects and subscriptions
+   - Use proper key props in lists
+
+### Testing Requirements
+
+For each implementation step:
+
+1. **Write Tests First**:
+   - When possible, follow a test-driven development approach
+   - Write tests before or alongside implementation code
+
+2. **Test Coverage**:
+   - Ensure all core functionality has test coverage
+   - Write unit tests for utilities and isolated functions
+   - Create component tests for React components
+   - Develop integration tests for connected features
+
+3. **Test Types**:
+   - **Unit Tests**: For individual functions and utilities
+   - **Component Tests**: For React component rendering and behavior
+   - **Integration Tests**: For connected components and features
+   - **E2E Tests**: For critical user flows
+
+4. **Test Command**:
+   - Run `npm test` to verify all tests pass
+   - Fix any failing tests before moving to the next step
+
+5. **Manual Testing**:
+   - For DOM interaction with Metabase, verify with manual testing
+   - Include instructions for manual testing when automated tests aren't sufficient
+
+## Quality Verification Process
+
+After implementing each step:
+
+1. Run linting: `npm run lint`
+2. Run type checking: `npm run type-check` 
+3. Run tests: `npm test`
+4. Fix any issues before marking a step as complete
+5. Document any known limitations or edge cases
+
+## Edge Cases and Error Handling
+
+- Ensure all async operations have proper error handling
+- Consider and handle edge cases in user input
+- Implement graceful degradation when services are unavailable
+- Add appropriate logging for debugging purposes
+
+## Performance Considerations
+
+- Avoid unnecessary re-renders in React components
+- Optimize expensive operations
+- Consider memory usage, especially with large schemas
+- Use appropriate caching strategies
+
+Remember that quality is as important as functionality. Each implementation step should produce code that is robust, maintainable, and tested.
+
